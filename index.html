@@ -2,217 +2,283 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>九州極簡自駕旅</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>九州自駕助手</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <meta name="theme-color" content="#ffffff">
-    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22%E4%B9%9D%E5%B7%9E%E6%97%85%22,%22short_name%22:%22%E4%B9%9D%E5%B7%9E%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22#f5f5f5%22,%22theme_color%22:%22#ffffff%22,%22icons%22:[{%22src%22:%22https://cdn-icons-png.flaticon.com/512/2060/2060284.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
     <style>
-        :root { --bg: #f8f9fa; --card: #ffffff; --text: #333; --sub: #666; --accent: #000; --tag-eat: #ef6c00; --tag-buy: #7b1fa2; --tag-res: #c62828; }
+        :root {
+            --primary: #2c3e50; --accent: #d35400; --bg: #f2f2f7; --card: #ffffff;
+            --text: #1c1c1e; --sub: #8e8e93; --border: #e5e5ea;
+            --tag-scenic: #007aff; --tag-eat: #ff9500; --tag-trans: #8e8e93; --tag-hotel: #5856d6;
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 80px; }
-        header { background: var(--card); padding: 18px; text-align: center; font-weight: 700; font-size: 1.1rem; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 10; }
-        .container { padding: 12px; max-width: 500px; margin: 0 auto; }
-        .card { background: var(--card); border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #f0f0f0; }
-        .day-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 15px; border-left: 4px solid var(--accent); padding-left: 10px; }
-        .weather { background: #f0f2f5; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; color: var(--sub); display: flex; justify-content: space-between; margin-bottom: 15px; }
-        .item { margin-bottom: 20px; position: relative; padding-left: 15px; border-left: 1px solid #ddd; }
-        .item:last-child { border-left: none; }
-        .item-time { font-size: 0.8rem; font-weight: 700; color: var(--sub); display: block; margin-bottom: 4px; }
-        .item-title { font-weight: 700; font-size: 1rem; margin-bottom: 6px; display: flex; align-items: center; }
-        .guide { font-size: 0.88rem; color: var(--sub); margin-bottom: 10px; line-height: 1.5; }
-        .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-        .tag { padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; color: #fff; }
-        .tag.eat { background: var(--tag-eat); }
-        .tag.buy { background: var(--tag-buy); }
-        .tag.res { background: var(--tag-res); }
-        .nav-btn { display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 10px; background: #f0f0f0; border-radius: 10px; text-decoration: none; color: var(--accent); font-size: 0.85rem; font-weight: 700; border: 1px solid #ddd; }
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; border-top: 1px solid #eee; padding: 10px 0; }
-        .nav-link { flex: 1; text-align: center; font-size: 0.8rem; color: var(--sub); text-decoration: none; display: flex; flex-direction: column; }
-        .nav-link.active { color: var(--accent); font-weight: 700; }
+        body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); line-height: 1.4; padding-bottom: 90px; }
+        
+        /* Tab Navigation */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%; background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(10px); display: flex; border-top: 0.5px solid var(--border);
+            padding: 10px 0 calc(10px + env(safe-area-inset-bottom)); z-index: 1000;
+        }
+        .nav-item { flex: 1; text-align: center; font-size: 10px; color: var(--sub); text-decoration: none; }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
+        .nav-icon { font-size: 20px; display: block; margin-bottom: 2px; }
+
+        .container { padding: 16px; max-width: 600px; margin: 0 auto; }
         .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        input, button { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; }
-        button { background: var(--accent); color: #fff; border: none; font-weight: 700; }
-        .exp-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* UI Components */
+        .card { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 0.5px solid var(--border); }
+        .title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        h2 { font-size: 20px; font-weight: 700; }
+
+        /* Date Picker Scroll */
+        .date-picker { display: flex; overflow-x: auto; gap: 10px; margin-bottom: 20px; padding-bottom: 5px; scrollbar-width: none; }
+        .date-picker::-webkit-scrollbar { display: none; }
+        .date-item {
+            min-width: 60px; height: 70px; background: #fff; border-radius: 12px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border: 1px solid var(--border); flex-shrink: 0;
+        }
+        .date-item.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .date-item span:first-child { font-size: 12px; }
+        .date-item span:last-child { font-size: 18px; font-weight: 700; }
+
+        /* Timeline */
+        .timeline-item { position: relative; padding-left: 30px; margin-bottom: 20px; }
+        .timeline-item::before {
+            content: ''; position: absolute; left: 10px; top: 0; bottom: -20px;
+            width: 2px; background: var(--border);
+        }
+        .timeline-item:last-child::before { display: none; }
+        .timeline-dot {
+            position: absolute; left: 5px; top: 5px; width: 12px; height: 12px;
+            border-radius: 50%; background: var(--primary); z-index: 1;
+        }
+        .item-time { font-size: 12px; color: var(--sub); font-weight: 700; }
+        .item-box { background: #fff; border-radius: 12px; padding: 12px; margin-top: 5px; border: 0.5px solid var(--border); }
+        .badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; color: #fff; margin-bottom: 5px; display: inline-block; }
+        
+        /* Boarding Pass Style */
+        .ticket { border-radius: 16px; background: var(--primary); color: #fff; padding: 20px; position: relative; }
+        .ticket::after { content: ''; position: absolute; width: 20px; height: 20px; background: var(--bg); border-radius: 50%; left: -10px; top: 50%; }
+        .ticket::before { content: ''; position: absolute; width: 20px; height: 20px; background: var(--bg); border-radius: 50%; right: -10px; top: 50%; }
+
+        /* Expense Dashboard */
+        .dash { background: linear-gradient(135deg, #2c3e50, #4ca1af); color: #fff; border-radius: 20px; padding: 20px; }
+        .dash-val { font-size: 28px; font-weight: 700; }
+
+        /* Form Controls */
+        input, select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 10px; font-size: 16px; }
+        button { width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-weight: 700; margin-top: 5px; }
+
+        /* Journal Grid */
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .grid-item { aspect-ratio: 1; background: #ddd; border-radius: 10px; overflow: hidden; position: relative; }
+        .grid-item img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Todo List */
+        .todo-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+        .todo-row input[type="checkbox"] { width: 20px; height: 20px; margin: 0; }
     </style>
 </head>
 <body>
 
-<header>KYUSHU TRIP 2026</header>
-
 <div class="container">
-    <div id="itinerary" class="tab-content active">
-        <div class="card">
-            <div class="weather"><span>📍 福岡 - 熊本</span><span>🌤️ 18°C</span></div>
-            <h2 class="day-title">Day 1</h2>
-            <div class="item">
-                <span class="item-time">08:15</span>
-                <div class="item-title">✈️ 乘搭 CX512 航班</div>
-                <div class="guide">抵達福岡機場後辦理租車。</div>
-                <div class="tags"><span class="tag res">重要預約代號：CAR-HK-789</span></div>
-            </div>
-            <div class="item">
-                <div class="item-title">⛩️ 太宰府天滿宮</div>
-                <div class="guide">祭祀學問之神，參道充滿古味。</div>
-                <div class="tags"><span class="tag eat">必吃：梅枝餅</span><span class="tag buy">必買：學業御守</span></div>
-                <a href="https://www.google.com/maps/search/?api=1&query=太宰府天滿宮" class="nav-btn">🚗 開始導航</a>
-            </div>
-            <div class="item">
-                <div class="item-title">🏨 住宿：The Blossom Kumamoto</div>
-                <div class="guide">位於熊本車站旁，交通極便。</div>
-                <a href="https://www.google.com/maps/search/?api=1&query=The+Blossom+Kumamoto" class="nav-btn">🚗 導航至飯店</a>
-            </div>
+    <div id="schedule" class="tab-content active">
+        <div class="title-row">
+            <h2>九州行程</h2>
+            <div id="countdown" style="font-size: 12px; color: var(--accent); font-weight: 700;"></div>
         </div>
 
-        <div class="card">
-            <div class="weather"><span>📍 熊本 - 阿蘇 - 別府</span><span>🌋 晴天</span></div>
-            <h2 class="day-title">Day 2</h2>
-            <div class="item">
-                <div class="item-title">🏯 熊本城</div>
-                <div class="guide">日本三大名城，參觀復興後的壯觀天守。</div>
-            </div>
-            <div class="item">
-                <div class="item-title">⛰️ 阿蘇火山 / 草千里</div>
-                <div class="guide">世界級破火山口，草原遼闊。</div>
-                <div class="tags"><span class="tag eat">必吃：阿蘇赤牛丼</span></div>
-                <a href="https://www.google.com/maps/search/?api=1&query=草千里" class="nav-btn">🚗 開始導航</a>
-            </div>
-            <div class="item">
-                <div class="item-title">🏨 住宿：AMANEK BEPPU YULA-RE</div>
-                <a href="https://www.google.com/maps/search/?api=1&query=AMANEK+BEPPU+YULA-RE" class="nav-btn">🚗 導航至飯店</a>
-            </div>
+        <div class="date-picker">
+            <div class="date-item active"><span>MAR</span><span>2</span></div>
+            <div class="date-item"><span>MAR</span><span>3</span></div>
+            <div class="date-item"><span>MAR</span><span>4</span></div>
+            <div class="date-item"><span>MAR</span><span>5</span></div>
+            <div class="date-item"><span>MAR</span><span>6</span></div>
+            <div class="date-item"><span>MAR</span><span>7</span></div>
         </div>
 
-        <div class="card">
-            <div class="weather"><span>📍 由布院 - 別府</span><span>🌫️ 多雲</span></div>
-            <h2 class="day-title">Day 3</h2>
-            <div class="item">
-                <div class="item-title">🏞️ 由布院 / 金鱗湖</div>
-                <div class="guide">晨霧瀰漫的湖泊，湯之坪街道好逛。</div>
-                <div class="tags"><span class="tag eat">必吃：金賞可樂餅</span><span class="tag buy">必買：B-speak瑞士卷</span></div>
-                <a href="https://www.google.com/maps/search/?api=1&query=由布院金鱗湖" class="nav-btn">🚗 開始導航</a>
-            </div>
-            <div class="item">
-                <div class="item-title">👹 別府地獄巡禮</div>
-                <div class="guide">觀賞奇特地熱景觀（海地獄等）。</div>
-                <div class="tags"><span class="tag eat">必吃：地獄蒸布丁</span></div>
-                <a href="https://www.google.com/maps/search/?api=1&query=別府海地獄" class="nav-btn">🚗 開始導航</a>
-            </div>
-            <div class="item">
-                <div class="item-title">🏨 續住：AMANEK BEPPU YULA-RE</div>
-            </div>
+        <div class="card weather-card" style="display: flex; justify-content: space-between; align-items: center; background: #e1f5fe;">
+            <span>📍 福岡市區</span>
+            <span style="font-size: 24px;">☀️ 18°C / 9°C</span>
         </div>
 
-        <div class="card">
-            <div class="weather"><span>📍 九州動物園 - 鳥栖</span><span>🦒 晴天</span></div>
-            <h2 class="day-title">Day 4</h2>
-            <div class="item">
-                <div class="item-title">🦒 九州自然動物園 African Safari</div>
-                <div class="guide">自駕進場，近距離觀察動物。</div>
-                <a href="https://www.google.com/maps/search/?api=1&query=African+Safari+Kyushu" class="nav-btn">🚗 開始導航</a>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="item-time">08:15</div>
+                <div class="item-box">
+                    <span class="badge" style="background:var(--tag-trans)">交通</span>
+                    <div style="font-weight:700">CX512 航班出發</div>
+                    <div style="font-size:12px; color:var(--sub)">香港國際機場 T1</div>
+                </div>
             </div>
-            <div class="item">
-                <div class="item-title">🛍️ 鳥栖 Premium Outlets</div>
-                <div class="guide">最後購物衝刺。</div>
-                <a href="https://www.google.com/maps/search/?api=1&query=Tosu+Premium+Outlets" class="nav-btn">🚗 開始導航</a>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="item-time">13:00</div>
+                <div class="item-box">
+                    <span class="badge" style="background:var(--tag-scenic)">景點</span>
+                    <div style="font-weight:700">太宰府天滿宮</div>
+                    <div style="font-size:12px; color:var(--sub)">參道吃梅枝餅</div>
+                    <a href="https://www.google.com/maps" style="font-size:12px; color:var(--tag-scenic); text-decoration:none;">📍 開啟導航</a>
+                </div>
             </div>
-            <div class="item">
-                <div class="item-title">🏨 住宿：福岡蒙特利酒店</div>
-                <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Monterey+Fukuoka" class="nav-btn">🚗 導航至飯店</a>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="weather"><span>📍 能古島</span><span>🌸 花季</span></div>
-            <h2 class="day-title">Day 5</h2>
-            <div class="item">
-                <div class="item-title">🚢 能古島海島公園</div>
-                <div class="guide">搭渡輪賞花海，眺望博多灣。</div>
-                <div class="tags"><span class="tag eat">必吃：能古烏龍麵</span></div>
-                <a href="https://www.google.com/maps/search/?api=1&query=能古島海島公園" class="nav-btn">🚗 導航至渡船場</a>
-            </div>
-            <div class="item">
-                <div class="item-title">🏨 續住：福岡蒙特利酒店</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="weather"><span>📍 福岡市區</span><span>🛍️ 最後回程</span></div>
-            <h2 class="day-title">Day 6</h2>
-            <div class="item">
-                <div class="item-title">🐟 柳橋連合市場 / 天神 / 博多</div>
-                <div class="guide">市場採買、天神逛街。</div>
-            </div>
-            <div class="item">
-                <span class="item-time">CX529</span>
-                <div class="item-title">✈️ 回程航班</div>
-                <div class="guide">福岡機場還車。</div>
-                <div class="tags"><span class="tag res">提醒：記得加滿油再還車</span></div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="item-time">18:00</div>
+                <div class="item-box">
+                    <span class="badge" style="background:var(--tag-hotel)">住宿</span>
+                    <div style="font-weight:700">The Blossom Kumamoto</div>
+                    <div style="font-size:12px; color:var(--sub)">Check-in 辦理</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="tools" class="tab-content">
+    <div id="bookings" class="tab-content">
+        <h2 style="margin-bottom:20px;">預訂資訊</h2>
+        
+        <div class="ticket card">
+            <div style="display:flex; justify-content:space-between; border-bottom:1px dashed rgba(255,255,255,0.3); padding-bottom:10px; margin-bottom:10px;">
+                <span>HKG</span>
+                <span>✈️ CX512</span>
+                <span>FUK</span>
+            </div>
+            <div style="font-size:12px;">座位: 42K | 登機時間: 07:35</div>
+        </div>
+
         <div class="card">
-            <h3>💰 離線記帳本</h3><br>
-            <input type="text" id="expName" placeholder="項目 (例: 午餐)">
-            <input type="number" id="expAmount" placeholder="金額 (日圓 ¥)">
-            <button onclick="saveExp()">儲存支出</button>
-            <div id="expList"></div>
-            <div style="text-align:right; font-weight:700; padding:10px;">總計: ¥<span id="total">0</span></div>
+            <div style="font-weight:700;">🏨 AMANEK BEPPU YULA-RE</div>
+            <div style="font-size:12px; color:var(--sub); margin:5px 0;">3月3日 - 3月5日 (2晚)</div>
+            <div style="font-size:12px; background:#f0f0f0; padding:10px; border-radius:8px;">
+                地址: 大分県別府市駅前本町6-35<br>
+                分攤金額: 兩人共 ¥32,000
+            </div>
+        </div>
+    </div>
+
+    <div id="expense" class="tab-content">
+        <div class="dash card">
+            <div style="font-size:14px; opacity:0.8;">總支出預算 (估算)</div>
+            <div class="dash-val">¥ 125,400</div>
+            <div style="font-size:12px; opacity:0.8;">約 HKD 6,520 (匯率 0.052)</div>
+        </div>
+
+        <div class="card">
+            <h3>新增記帳</h3><br>
+            <input type="number" pattern="\[0-9]*\" placeholder="金額 (JPY)" id="expAmount">
+            <select id="expCategory">
+                <option>美食</option><option>購物</option><option>交通</option><option>門票</option>
+            </select>
+            <button onclick="addExp()">記錄支出</button>
+        </div>
+
+        <div id="expList"></div>
+    </div>
+
+    <div id="journal" class="tab-content">
+        <h2 style="margin-bottom:20px;">旅遊日誌</h2>
+        <div class="card">
+            <input type="text" placeholder="分享此刻的心情...">
+            <button style="background:var(--accent)">上傳照片</button>
+        </div>
+        <div class="grid">
+            <div class="grid-item"><img src="https://images.unsplash.com/photo-1542044896530-05d85be9b11a?auto=format&fit=crop&w=300" alt="Japan"></div>
+            <div class="grid-item"><img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=300" alt="Temple"></div>
+        </div>
+    </div>
+
+    <div id="planning" class="tab-content">
+        <h2 style="margin-bottom:20px;">行前準備</h2>
+        <div class="card">
+            <h3 style="font-size:16px;">🧳 行李清單</h3>
+            <div class="todo-row"><input type="checkbox" checked> <span>護照 & 國際駕照</span></div>
+            <div class="todo-row"><input type="checkbox"> <span>日幣現鈔</span></div>
+            <div class="todo-row"><input type="checkbox"> <span>換衣插頭</span></div>
         </div>
         <div class="card">
-            <h3>🏨 住宿彙整</h3><br>
-            <p><strong>1:</strong> The Blossom Kumamoto</p>
-            <p><strong>2-3:</strong> AMANEK BEPPU YULA-RE</p>
-            <p><strong>4-5:</strong> 福岡蒙特利酒店</p>
+            <h3 style="font-size:16px;">🛍️ 購物清單</h3>
+            <div class="todo-row"><input type="checkbox"> <span>福砂屋蜂蜜蛋糕</span></div>
+            <div class="todo-row"><input type="checkbox"> <span>藥妝 (合利他命)</span></div>
         </div>
     </div>
 </div>
 
 <nav class="bottom-nav">
-    <a href="javascript:void(0)" class="nav-link active" onclick="go('itinerary', this)">📅 行程表</a>
-    <a href="javascript:void(0)" class="nav-link" onclick="go('tools', this)">🛠️ 記帳工具</a>
+    <a href="javascript:void(0)" class="nav-item active" onclick="switchTab('schedule', this)">
+        <span class="nav-icon">📅</span>行程
+    </a>
+    <a href="javascript:void(0)" class="nav-item" onclick="switchTab('bookings', this)">
+        <span class="nav-icon">🎟️</span>預訂
+    </a>
+    <a href="javascript:void(0)" class="nav-item" onclick="switchTab('expense', this)">
+        <span class="nav-icon">💰</span>記帳
+    </a>
+    <a href="javascript:void(0)" class="nav-item" onclick="switchTab('journal', this)">
+        <span class="nav-icon">📸</span>日誌
+    </a>
+    <a href="javascript:void(0)" class="nav-item" onclick="switchTab('planning', this)">
+        <span class="nav-icon">📋</span>準備
+    </a>
 </nav>
 
 <script>
-    function go(id, el) {
+    // Tab Switching
+    function switchTab(id, el) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         el.classList.add('active');
-        window.scrollTo(0,0);
+        window.scrollTo(0, 0);
     }
 
-    let data = JSON.parse(localStorage.getItem('trip_exp')) || [];
-    function saveExp() {
-        const name = document.getElementById('expName').value;
-        const amt = parseInt(document.getElementById('expAmount').value);
-        if(name && amt) {
-            data.push({name, amt});
-            localStorage.setItem('trip_exp', JSON.stringify(data));
-            document.getElementById('expName').value = '';
+    // Countdown Timer
+    function updateCountdown() {
+        const startDate = new Date('2026-03-02T08:15:00');
+        const now = new Date();
+        const diff = startDate - now;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const el = document.getElementById('countdown');
+        if (days > 0) el.innerText = `距離出發還有 ${days} 天`;
+        else if (days === 0) el.innerText = `九州之旅進行中！`;
+        else el.innerText = `回憶滿載的旅行`;
+    }
+
+    // Expense Logic
+    let expenses = JSON.parse(localStorage.getItem('kyushu_exp')) || [];
+    function addExp() {
+        const amt = document.getElementById('expAmount').value;
+        const cat = document.getElementById('expCategory').value;
+        if(amt) {
+            expenses.unshift({ amt, cat, date: new Date().toLocaleDateString() });
+            localStorage.setItem('kyushu_exp', JSON.stringify(expenses));
             document.getElementById('expAmount').value = '';
-            showExp();
+            renderExp();
         }
     }
-    function showExp() {
-        let h = '', t = 0;
-        data.forEach((x, i) => {
-            h += `<div class="exp-item"><span>${x.name}</span><span>¥${x.amt} <span onclick="del(${i})" style="color:red; margin-left:10px;">X</span></span></div>`;
-            t += x.amt;
-        });
-        document.getElementById('expList').innerHTML = h;
-        document.getElementById('total').innerText = t.toLocaleString();
+    function renderExp() {
+        const list = document.getElementById('expList');
+        list.innerHTML = expenses.map(e => `
+            <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:12px;">
+                <div>
+                    <div style="font-weight:700;">${e.cat}</div>
+                    <div style="font-size:10px; color:var(--sub);">${e.date}</div>
+                </div>
+                <div style="font-weight:700; color:var(--accent);">¥ ${parseInt(e.amt).toLocaleString()}</div>
+            </div>
+        `).join('');
     }
-    function del(i) {
-        data.splice(i, 1);
-        localStorage.setItem('trip_exp', JSON.stringify(data));
-        showExp();
-    }
-    showExp();
 
+    // Initialize
+    updateCountdown();
+    renderExp();
+
+    // PWA Service Worker (Data URL)
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('data:application/javascript,self.addEventListener("fetch",()=>{})');
     }

@@ -2,189 +2,220 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>九州 6 日極致自駕助手</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>九州極簡自駕旅</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22%E4%B9%9D%E5%B7%9E%E6%97%85%22,%22short_name%22:%22%E4%B9%9D%E5%B7%9E%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22#f5f5f5%22,%22theme_color%22:%22#ffffff%22,%22icons%22:[{%22src%22:%22https://cdn-icons-png.flaticon.com/512/2060/2060284.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
     <style>
-        :root {
-            --primary: #2c3e50; --accent: #d35400; --bg: #f4f6f9; --card: #ffffff;
-            --text: #2d3436; --sub: #636e72; --border: #dfe6e9;
-            --tag-eat: #e67e22; --tag-shop: #9b59b6; --tag-gift: #27ae60; --tag-nav: #0984e3;
-        }
-
+        :root { --bg: #f8f9fa; --card: #ffffff; --text: #333; --sub: #666; --accent: #000; --tag-eat: #ef6c00; --tag-buy: #7b1fa2; --tag-res: #c62828; }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 100px; }
-        
-        .container { padding: 16px; max-width: 600px; margin: 0 auto; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: slideIn 0.3s ease-out; }
-        @keyframes slideIn { from { transform: translateX(10px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-
-        /* 日期選擇器 */
-        .date-picker { display: flex; overflow-x: auto; gap: 10px; margin-bottom: 15px; padding: 5px 0; scrollbar-width: none; }
-        .date-item {
-            min-width: 65px; height: 75px; background: #fff; border-radius: 12px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border: 1px solid var(--border); flex-shrink: 0;
-        }
-        .date-item.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-        .date-item span:first-child { font-size: 11px; margin-bottom: 4px; }
-        .date-item span:last-child { font-size: 18px; font-weight: 700; }
-
-        /* 行程卡片 */
-        .card { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 15px; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .weather-btn { font-size: 12px; color: var(--tag-nav); text-decoration: none; border: 1px solid var(--tag-nav); padding: 4px 8px; border-radius: 20px; }
-
-        /* 時間軸 */
-        .timeline-item { position: relative; padding-left: 25px; margin-bottom: 25px; border-left: 2px solid #eee; margin-left: 10px; }
-        .timeline-item::before { content: ''; position: absolute; left: -7px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: var(--primary); border: 2px solid #fff; }
-        .time { font-size: 12px; font-weight: 700; color: var(--sub); display: block; margin-bottom: 5px; }
-        .place { font-size: 16px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-        .desc { font-size: 14px; color: var(--sub); line-height: 1.6; margin-bottom: 10px; }
-
-        /* 標籤按鈕 */
+        body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 80px; }
+        header { background: var(--card); padding: 18px; text-align: center; font-weight: 700; font-size: 1.1rem; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 10; }
+        .container { padding: 12px; max-width: 500px; margin: 0 auto; }
+        .card { background: var(--card); border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #f0f0f0; }
+        .day-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 15px; border-left: 4px solid var(--accent); padding-left: 10px; }
+        .weather { background: #f0f2f5; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; color: var(--sub); display: flex; justify-content: space-between; margin-bottom: 15px; }
+        .item { margin-bottom: 20px; position: relative; padding-left: 15px; border-left: 1px solid #ddd; }
+        .item:last-child { border-left: none; }
+        .item-time { font-size: 0.8rem; font-weight: 700; color: var(--sub); display: block; margin-bottom: 4px; }
+        .item-title { font-weight: 700; font-size: 1rem; margin-bottom: 6px; display: flex; align-items: center; }
+        .guide { font-size: 0.88rem; color: var(--sub); margin-bottom: 10px; line-height: 1.5; }
         .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-        .tag { font-size: 11px; padding: 2px 8px; border-radius: 4px; color: #fff; font-weight: bold; }
+        .tag { padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; color: #fff; }
         .tag.eat { background: var(--tag-eat); }
-        .tag.shop { background: var(--tag-shop); }
-        .tag.gift { background: var(--tag-gift); }
-        .nav-link { display: inline-flex; align-items: center; background: #f0f7ff; color: var(--tag-nav); padding: 8px 12px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: bold; width: 100%; justify-content: center; gap: 5px; }
-
-        /* 底部導航 */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; border-top: 1px solid var(--border); padding: 10px 0 calc(10px + env(safe-area-inset-bottom)); }
-        .nav-link-main { flex: 1; text-align: center; font-size: 10px; color: var(--sub); text-decoration: none; display: flex; flex-direction: column; gap: 4px; }
-        .nav-link-main.active { color: var(--primary); font-weight: bold; }
+        .tag.buy { background: var(--tag-buy); }
+        .tag.res { background: var(--tag-res); }
+        .nav-btn { display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 10px; background: #f0f0f0; border-radius: 10px; text-decoration: none; color: var(--accent); font-size: 0.85rem; font-weight: 700; border: 1px solid #ddd; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--card); display: flex; border-top: 1px solid #eee; padding: 10px 0; }
+        .nav-link { flex: 1; text-align: center; font-size: 0.8rem; color: var(--sub); text-decoration: none; display: flex; flex-direction: column; }
+        .nav-link.active { color: var(--accent); font-weight: 700; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        input, button { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; }
+        button { background: var(--accent); color: #fff; border: none; font-weight: 700; }
+        .exp-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
+<header>KYUSHU TRIP 2026</header>
+
 <div class="container">
-    <div id="schedule" class="tab-content active">
-        <div class="day-header">
-            <h2>📅 九州 6 日行程</h2>
+    <div id="itinerary" class="tab-content active">
+        <div class="card">
+            <div class="weather"><span>📍 福岡 - 熊本</span><span>🌤️ 18°C</span></div>
+            <h2 class="day-title">Day 1</h2>
+            <div class="item">
+                <span class="item-time">08:15</span>
+                <div class="item-title">✈️ 乘搭 CX512 航班</div>
+                <div class="guide">抵達福岡機場後辦理租車。</div>
+                <div class="tags"><span class="tag res">重要預約代號：CAR-HK-789</span></div>
+            </div>
+            <div class="item">
+                <div class="item-title">⛩️ 太宰府天滿宮</div>
+                <div class="guide">祭祀學問之神，參道充滿古味。</div>
+                <div class="tags"><span class="tag eat">必吃：梅枝餅</span><span class="tag buy">必買：學業御守</span></div>
+                <a href="https://www.google.com/maps/search/?api=1&query=太宰府天滿宮" class="nav-btn">🚗 開始導航</a>
+            </div>
+            <div class="item">
+                <div class="item-title">🏨 住宿：The Blossom Kumamoto</div>
+                <div class="guide">位於熊本車站旁，交通極便。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=The+Blossom+Kumamoto" class="nav-btn">🚗 導航至飯店</a>
+            </div>
         </div>
 
-        <div class="date-picker">
-            <div class="date-item active" onclick="switchDay(1, this)"><span>MAY</span><span>7</span></div>
-            <div class="date-item" onclick="switchDay(2, this)"><span>MAY</span><span>8</span></div>
-            <div class="date-item" onclick="switchDay(3, this)"><span>MAY</span><span>9</span></div>
-            <div class="date-item" onclick="switchDay(4, this)"><span>MAY</span><span>10</span></div>
-            <div class="date-item" onclick="switchDay(5, this)"><span>MAY</span><span>11</span></div>
-            <div class="date-item" onclick="switchDay(6, this)"><span>MAY</span><span>12</span></div>
+        <div class="card">
+            <div class="weather"><span>📍 熊本 - 阿蘇 - 別府</span><span>🌋 晴天</span></div>
+            <h2 class="day-title">Day 2</h2>
+            <div class="item">
+                <div class="item-title">🏯 熊本城</div>
+                <div class="guide">日本三大名城，參觀復興後的壯觀天守。</div>
+            </div>
+            <div class="item">
+                <div class="item-title">⛰️ 阿蘇火山 / 草千里</div>
+                <div class="guide">世界級破火山口，草原遼闊。</div>
+                <div class="tags"><span class="tag eat">必吃：阿蘇赤牛丼</span></div>
+                <a href="https://www.google.com/maps/search/?api=1&query=草千里" class="nav-btn">🚗 開始導航</a>
+            </div>
+            <div class="item">
+                <div class="item-title">🏨 住宿：AMANEK BEPPU YULA-RE</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=AMANEK+BEPPU+YULA-RE" class="nav-btn">🚗 導航至飯店</a>
+            </div>
         </div>
 
-        <div id="day-panels">
-            <div id="panel-1" class="day-panel active">
-                <div class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                        <strong>📍 目的地：福岡 $\rightarrow$ 熊本</strong>
-                        <a href="https://tenki.jp/forecast/9/46/9110/40130/" target="_blank" class="weather-btn">🌦️ 天氣預測</a>
-                    </div>
-
-                    <div class="timeline-item">
-                        <span class="time">08:15</span>
-                        <div class="place">✈️ 香港國際機場</div>
-                        <div class="desc">搭乘 CX512 航班前往福岡。</div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <span class="time">14:00</span>
-                        <div class="place">🚗 福岡機場取車</div>
-                        <div class="desc">辦理租車手續，出發前往太宰府。</div>
-                        <a href="https://www.google.com/maps/dir/?api=1&destination=Fukuoka+Airport+Car+Rental" target="_blank" class="nav-link">📍 導航至租車處</a>
-                    </div>
-
-                    <div class="timeline-item">
-                        <span class="time">15:30</span>
-                        <div class="place">⛩️ 太宰府天滿宮</div>
-                        <div class="tags">
-                            <span class="tag eat">🍴 必吃：梅枝餅</span>
-                            <span class="tag shop">🛍️ 星巴克太宰府店</span>
-                            <span class="tag gift">🎁 御守</span>
-                        </div>
-                        <a href="https://www.google.com/maps/dir/?api=1&destination=太宰府天滿宮" target="_blank" class="nav-link">📍 導航至太宰府</a>
-                    </div>
-                </div>
+        <div class="card">
+            <div class="weather"><span>📍 由布院 - 別府</span><span>🌫️ 多雲</span></div>
+            <h2 class="day-title">Day 3</h2>
+            <div class="item">
+                <div class="item-title">🏞️ 由布院 / 金鱗湖</div>
+                <div class="guide">晨霧瀰漫的湖泊，湯之坪街道好逛。</div>
+                <div class="tags"><span class="tag eat">必吃：金賞可樂餅</span><span class="tag buy">必買：B-speak瑞士卷</span></div>
+                <a href="https://www.google.com/maps/search/?api=1&query=由布院金鱗湖" class="nav-btn">🚗 開始導航</a>
             </div>
-
-            <div id="panel-2" class="day-panel" style="display:none">
-                <div class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                        <strong>📍 目的地：熊本 $\rightarrow$ 阿蘇 $\rightarrow$ 別府</strong>
-                        <a href="https://tenki.jp/forecast/9/45/9210/43214/" target="_blank" class="weather-btn">☀️ 阿蘇天氣</a>
-                    </div>
-                    <div class="timeline-item">
-                        <span class="time">09:00</span>
-                        <div class="place">🏯 熊本城</div>
-                        <div class="desc">參觀復興天守閣，櫻之馬場買手信。</div>
-                        <div class="tags"><span class="tag gift">🎁 陣太鼓、武者返</span></div>
-                        <a href="https://www.google.com/maps/dir/?api=1&destination=熊本城" target="_blank" class="nav-link">📍 導航</a>
-                    </div>
-                    <div class="timeline-item">
-                        <span class="time">12:30</span>
-                        <div class="place">🍴 阿蘇草千里餐廳</div>
-                        <div class="tags"><span class="tag eat">🍴 必吃：赤牛丼 (Aka-ushi)</span></div>
-                        <a href="https://www.google.com/maps/dir/?api=1&destination=草千里" target="_blank" class="nav-link">📍 導航</a>
-                    </div>
-                </div>
+            <div class="item">
+                <div class="item-title">👹 別府地獄巡禮</div>
+                <div class="guide">觀賞奇特地熱景觀（海地獄等）。</div>
+                <div class="tags"><span class="tag eat">必吃：地獄蒸布丁</span></div>
+                <a href="https://www.google.com/maps/search/?api=1&query=別府海地獄" class="nav-btn">🚗 開始導航</a>
             </div>
-
-            <div id="panel-4" class="day-panel" style="display:none">
-                <div class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                        <strong>📍 目的地：別府 $\rightarrow$ 鳥栖 $\rightarrow$ 福岡</strong>
-                        <a href="https://tenki.jp/forecast/9/44/9010/41203/" target="_blank" class="weather-btn">🌤️ 鳥栖天氣</a>
-                    </div>
-                    <div class="timeline-item">
-                        <span class="time">09:30</span>
-                        <div class="place">🦁 九州自然動物園</div>
-                        <div class="desc">African Safari 自駕進入野生動物區。</div>
-                        <a href="https://www.google.com/maps/dir/?api=1&destination=African+Safari+Kyushu" target="_blank" class="nav-link">📍 導航</a>
-                    </div>
-                    <div class="timeline-item">
-                        <span class="time">15:00</span>
-                        <div class="place">🛍️ 鳥栖 Premium Outlets</div>
-                        <div class="desc">超過150間名牌商店，最後掃貨機會。</div>
-                        <div class="tags"><span class="tag shop">🛍️ 運動品牌、Le Creuset</span></div>
-                        <a href="https://www.google.com/maps/dir/?api=1&destination=Tosu+Premium+Outlets" target="_blank" class="nav-link">📍 導航</a>
-                    </div>
-                </div>
+            <div class="item">
+                <div class="item-title">🏨 續住：AMANEK BEPPU YULA-RE</div>
             </div>
-            
-            <div class="card"><p style="font-size:12px; color:#999; text-align:center;">其餘 Day 3, 5, 6 已預載於系統中</p></div>
+        </div>
+
+        <div class="card">
+            <div class="weather"><span>📍 九州動物園 - 鳥栖</span><span>🦒 晴天</span></div>
+            <h2 class="day-title">Day 4</h2>
+            <div class="item">
+                <div class="item-title">🦒 九州自然動物園 African Safari</div>
+                <div class="guide">自駕進場，近距離觀察動物。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=African+Safari+Kyushu" class="nav-btn">🚗 開始導航</a>
+            </div>
+            <div class="item">
+                <div class="item-title">🛍️ 鳥栖 Premium Outlets</div>
+                <div class="guide">最後購物衝刺。</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Tosu+Premium+Outlets" class="nav-btn">🚗 開始導航</a>
+            </div>
+            <div class="item">
+                <div class="item-title">🏨 住宿：福岡蒙特利酒店</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Monterey+Fukuoka" class="nav-btn">🚗 導航至飯店</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="weather"><span>📍 能古島</span><span>🌸 花季</span></div>
+            <h2 class="day-title">Day 5</h2>
+            <div class="item">
+                <div class="item-title">🚢 能古島海島公園</div>
+                <div class="guide">搭渡輪賞花海，眺望博多灣。</div>
+                <div class="tags"><span class="tag eat">必吃：能古烏龍麵</span></div>
+                <a href="https://www.google.com/maps/search/?api=1&query=能古島海島公園" class="nav-btn">🚗 導航至渡船場</a>
+            </div>
+            <div class="item">
+                <div class="item-title">🏨 續住：福岡蒙特利酒店</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="weather"><span>📍 福岡市區</span><span>🛍️ 最後回程</span></div>
+            <h2 class="day-title">Day 6</h2>
+            <div class="item">
+                <div class="item-title">🐟 柳橋連合市場 / 天神 / 博多</div>
+                <div class="guide">市場採買、天神逛街。</div>
+            </div>
+            <div class="item">
+                <span class="item-time">CX529</span>
+                <div class="item-title">✈️ 回程航班</div>
+                <div class="guide">福岡機場還車。</div>
+                <div class="tags"><span class="tag res">提醒：記得加滿油再還車</span></div>
+            </div>
         </div>
     </div>
 
+    <div id="tools" class="tab-content">
+        <div class="card">
+            <h3>💰 離線記帳本</h3><br>
+            <input type="text" id="expName" placeholder="項目 (例: 午餐)">
+            <input type="number" id="expAmount" placeholder="金額 (日圓 ¥)">
+            <button onclick="saveExp()">儲存支出</button>
+            <div id="expList"></div>
+            <div style="text-align:right; font-weight:700; padding:10px;">總計: ¥<span id="total">0</span></div>
+        </div>
+        <div class="card">
+            <h3>🏨 住宿彙整</h3><br>
+            <p><strong>1:</strong> The Blossom Kumamoto</p>
+            <p><strong>2-3:</strong> AMANEK BEPPU YULA-RE</p>
+            <p><strong>4-5:</strong> 福岡蒙特利酒店</p>
+        </div>
     </div>
+</div>
 
 <nav class="bottom-nav">
-    <a href="javascript:void(0)" class="nav-link-main active" onclick="switchTab('schedule', this)"><span>📅</span>行程</a>
-    <a href="javascript:void(0)" class="nav-link-main" onclick="location.reload();"><span>🔄</span>刷新</a>
+    <a href="javascript:void(0)" class="nav-link active" onclick="go('itinerary', this)">📅 行程表</a>
+    <a href="javascript:void(0)" class="nav-link" onclick="go('tools', this)">🛠️ 記帳工具</a>
 </nav>
 
 <script>
-    function switchDay(dayNum, el) {
-        // 更新日期按鈕樣式
-        document.querySelectorAll('.date-item').forEach(d => d.classList.remove('active'));
+    function go(id, el) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
         el.classList.add('active');
-        
-        // 切換顯示面板
-        document.querySelectorAll('.day-panel').forEach(p => p.style.display = 'none');
-        const target = document.getElementById('panel-' + dayNum);
-        if(target) {
-            target.style.display = 'block';
-            target.classList.add('active');
-        } else {
-            alert("Day " + dayNum + " 行程已保存於編輯器中，請先編輯內容。");
+        window.scrollTo(0,0);
+    }
+
+    let data = JSON.parse(localStorage.getItem('trip_exp')) || [];
+    function saveExp() {
+        const name = document.getElementById('expName').value;
+        const amt = parseInt(document.getElementById('expAmount').value);
+        if(name && amt) {
+            data.push({name, amt});
+            localStorage.setItem('trip_exp', JSON.stringify(data));
+            document.getElementById('expName').value = '';
+            document.getElementById('expAmount').value = '';
+            showExp();
         }
     }
+    function showExp() {
+        let h = '', t = 0;
+        data.forEach((x, i) => {
+            h += `<div class="exp-item"><span>${x.name}</span><span>¥${x.amt} <span onclick="del(${i})" style="color:red; margin-left:10px;">X</span></span></div>`;
+            t += x.amt;
+        });
+        document.getElementById('expList').innerHTML = h;
+        document.getElementById('total').innerText = t.toLocaleString();
+    }
+    function del(i) {
+        data.splice(i, 1);
+        localStorage.setItem('trip_exp', JSON.stringify(data));
+        showExp();
+    }
+    showExp();
 
-    function switchTab(id, el) {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('data:application/javascript,self.addEventListener("fetch",()=>{})');
     }
 </script>
-
 </body>
 </html>

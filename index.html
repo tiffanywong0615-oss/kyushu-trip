@@ -3,19 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>九州自駕助手</title>
+    <title>九州自駕助手 (5/7-5/12)</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #2c3e50; --accent: #d35400; --bg: #f2f2f7; --card: #ffffff;
             --text: #1c1c1e; --sub: #8e8e93; --border: #e5e5ea;
-            --tag-scenic: #007aff; --tag-eat: #ff9500; --tag-trans: #8e8e93; --tag-hotel: #5856d6;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); line-height: 1.4; padding-bottom: 90px; }
+        body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 100px; }
         
-        /* Tab Navigation */
+        /* 導航列 */
         .bottom-nav {
             position: fixed; bottom: 0; width: 100%; background: rgba(255,255,255,0.9);
             backdrop-filter: blur(10px); display: flex; border-top: 0.5px solid var(--border);
@@ -27,261 +26,266 @@
 
         .container { padding: 16px; max-width: 600px; margin: 0 auto; }
         .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-content.active { display: block; }
 
-        /* UI Components */
-        .card { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 0.5px solid var(--border); }
-        .title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        h2 { font-size: 20px; font-weight: 700; }
-
-        /* Date Picker Scroll */
+        .card { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 0.5px solid var(--border); position: relative; }
+        h2 { font-size: 20px; font-weight: 700; margin-bottom: 15px; }
+        
+        /* 日期選擇器 */
         .date-picker { display: flex; overflow-x: auto; gap: 10px; margin-bottom: 20px; padding-bottom: 5px; scrollbar-width: none; }
-        .date-picker::-webkit-scrollbar { display: none; }
         .date-item {
-            min-width: 60px; height: 70px; background: #fff; border-radius: 12px;
+            min-width: 65px; height: 75px; background: #fff; border-radius: 12px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border: 1px solid var(--border); flex-shrink: 0;
+            border: 1px solid var(--border); flex-shrink: 0; cursor: pointer;
         }
         .date-item.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-        .date-item span:first-child { font-size: 12px; }
+        .date-item span:first-child { font-size: 11px; margin-bottom: 4px; opacity: 0.8; }
         .date-item span:last-child { font-size: 18px; font-weight: 700; }
 
-        /* Timeline */
-        .timeline-item { position: relative; padding-left: 30px; margin-bottom: 20px; }
-        .timeline-item::before {
-            content: ''; position: absolute; left: 10px; top: 0; bottom: -20px;
-            width: 2px; background: var(--border);
-        }
-        .timeline-item:last-child::before { display: none; }
-        .timeline-dot {
-            position: absolute; left: 5px; top: 5px; width: 12px; height: 12px;
-            border-radius: 50%; background: var(--primary); z-index: 1;
-        }
-        .item-time { font-size: 12px; color: var(--sub); font-weight: 700; }
-        .item-box { background: #fff; border-radius: 12px; padding: 12px; margin-top: 5px; border: 0.5px solid var(--border); }
-        .badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; color: #fff; margin-bottom: 5px; display: inline-block; }
-        
-        /* Boarding Pass Style */
-        .ticket { border-radius: 16px; background: var(--primary); color: #fff; padding: 20px; position: relative; }
-        .ticket::after { content: ''; position: absolute; width: 20px; height: 20px; background: var(--bg); border-radius: 50%; left: -10px; top: 50%; }
-        .ticket::before { content: ''; position: absolute; width: 20px; height: 20px; background: var(--bg); border-radius: 50%; right: -10px; top: 50%; }
+        /* 行程顯示區 */
+        .schedule-display { min-height: 200px; }
+        .day-panel { display: none; }
+        .day-panel.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Expense Dashboard */
-        .dash { background: linear-gradient(135deg, #2c3e50, #4ca1af); color: #fff; border-radius: 20px; padding: 20px; }
-        .dash-val { font-size: 28px; font-weight: 700; }
+        /* 編輯功能樣式 */
+        .edit-area { width: 100%; min-height: 150px; padding: 12px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; font-size: 15px; margin: 10px 0; display: none; line-height: 1.6; }
+        .display-text { white-space: pre-wrap; line-height: 1.8; font-size: 15px; margin-top: 10px; }
+        .btn-edit { font-size: 12px; padding: 4px 12px; border-radius: 6px; border: 1px solid var(--primary); background: transparent; color: var(--primary); float: right; }
+        .btn-save { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; display: none; margin-top: 10px; }
 
-        /* Form Controls */
-        input, select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 10px; font-size: 16px; }
-        button { width: 100%; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-weight: 700; margin-top: 5px; }
-
-        /* Journal Grid */
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .grid-item { aspect-ratio: 1; background: #ddd; border-radius: 10px; overflow: hidden; position: relative; }
-        .grid-item img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* Todo List */
-        .todo-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
-        .todo-row input[type="checkbox"] { width: 20px; height: 20px; margin: 0; }
+        /* 通用元件 */
+        input[type="text"], input[type="number"] { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border); font-size: 16px; margin-bottom: 10px; }
+        .todo-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 0.5px solid var(--border); }
     </style>
 </head>
 <body>
 
 <div class="container">
+    
     <div id="schedule" class="tab-content active">
-        <div class="title-row">
-            <h2>九州行程</h2>
-            <div id="countdown" style="font-size: 12px; color: var(--accent); font-weight: 700;"></div>
-        </div>
-
+        <h2>九州 6 日行程</h2>
+        
         <div class="date-picker">
-            <div class="date-item active"><span>MAR</span><span>2</span></div>
-            <div class="date-item"><span>MAR</span><span>3</span></div>
-            <div class="date-item"><span>MAR</span><span>4</span></div>
-            <div class="date-item"><span>MAR</span><span>5</span></div>
-            <div class="date-item"><span>MAR</span><span>6</span></div>
-            <div class="date-item"><span>MAR</span><span>7</span></div>
+            <div class="date-item active" onclick="switchDay(1, this)"><span>MAY</span><span>7</span></div>
+            <div class="date-item" onclick="switchDay(2, this)"><span>MAY</span><span>8</span></div>
+            <div class="date-item" onclick="switchDay(3, this)"><span>MAY</span><span>9</span></div>
+            <div class="date-item" onclick="switchDay(4, this)"><span>MAY</span><span>10</span></div>
+            <div class="date-item" onclick="switchDay(5, this)"><span>MAY</span><span>11</span></div>
+            <div class="date-item" onclick="switchDay(6, this)"><span>MAY</span><span>12</span></div>
         </div>
 
-        <div class="card weather-card" style="display: flex; justify-content: space-between; align-items: center; background: #e1f5fe;">
-            <span>📍 福岡市區</span>
-            <span style="font-size: 24px;">☀️ 18°C / 9°C</span>
-        </div>
+        <div class="schedule-display">
+            <div id="day-1" class="day-panel active card">
+                <button class="btn-edit" onclick="toggleEditDay(1)">編輯行程</button>
+                <h3>Day 1 (5/7)</h3>
+                <div class="display-text" id="view-day-1">✈️ 08:15 CX512 航班
+🚗 福岡機場取車
+⛩️ 太宰府天滿宮
+🏨 住宿：The Blossom Kumamoto</div>
+                <textarea class="edit-area" id="edit-day-1"></textarea>
+                <button class="btn-save" id="save-day-1" onclick="saveDay(1)">儲存更新</button>
+            </div>
 
-        <div class="timeline">
-            <div class="timeline-item">
-                <div class="timeline-dot"></div>
-                <div class="item-time">08:15</div>
-                <div class="item-box">
-                    <span class="badge" style="background:var(--tag-trans)">交通</span>
-                    <div style="font-weight:700">CX512 航班出發</div>
-                    <div style="font-size:12px; color:var(--sub)">香港國際機場 T1</div>
-                </div>
+            <div id="day-2" class="day-panel card">
+                <button class="btn-edit" onclick="toggleEditDay(2)">編輯行程</button>
+                <h3>Day 2 (5/8)</h3>
+                <div class="display-text" id="view-day-2">🏯 熊本城
+🌋 阿蘇火山 / 草千里
+🏨 住宿：AMANEK BEPPU</div>
+                <textarea class="edit-area" id="edit-day-2"></textarea>
+                <button class="btn-save" id="save-day-2" onclick="saveDay(2)">儲存更新</button>
             </div>
-            <div class="timeline-item">
-                <div class="timeline-dot"></div>
-                <div class="item-time">13:00</div>
-                <div class="item-box">
-                    <span class="badge" style="background:var(--tag-scenic)">景點</span>
-                    <div style="font-weight:700">太宰府天滿宮</div>
-                    <div style="font-size:12px; color:var(--sub)">參道吃梅枝餅</div>
-                    <a href="https://www.google.com/maps" style="font-size:12px; color:var(--tag-scenic); text-decoration:none;">📍 開啟導航</a>
-                </div>
+
+            <div id="day-3" class="day-panel card">
+                <button class="btn-edit" onclick="toggleEditDay(3)">編輯行程</button>
+                <h3>Day 3 (5/9)</h3>
+                <div class="display-text" id="view-day-3">🏞️ 由布院 / 金鱗湖
+🛍️ 湯之坪街道散策
+🏨 住宿：AMANEK BEPPU</div>
+                <textarea class="edit-area" id="edit-day-3"></textarea>
+                <button class="btn-save" id="save-day-3" onclick="saveDay(3)">儲存更新</button>
             </div>
-            <div class="timeline-item">
-                <div class="timeline-dot"></div>
-                <div class="item-time">18:00</div>
-                <div class="item-box">
-                    <span class="badge" style="background:var(--tag-hotel)">住宿</span>
-                    <div style="font-weight:700">The Blossom Kumamoto</div>
-                    <div style="font-size:12px; color:var(--sub)">Check-in 辦理</div>
-                </div>
+
+            <div id="day-4" class="day-panel card">
+                <button class="btn-edit" onclick="toggleEditDay(4)">編輯行程</button>
+                <h3>Day 4 (5/10)</h3>
+                <div class="display-text" id="view-day-4">🦒 九州自然動物園
+🛍️ 鳥栖 Premium Outlets
+🏨 住宿：福岡蒙特利酒店</div>
+                <textarea class="edit-area" id="edit-day-4"></textarea>
+                <button class="btn-save" id="save-day-4" onclick="saveDay(4)">儲存更新</button>
+            </div>
+
+            <div id="day-5" class="day-panel card">
+                <button class="btn-edit" onclick="toggleEditDay(5)">編輯行程</button>
+                <h3>Day 5 (5/11)</h3>
+                <div class="display-text" id="view-day-5">⛴️ 能古島賞花 (海島公園)
+🍜 博多屋台 / 天神逛街
+🏨 住宿：福岡蒙特利酒店</div>
+                <textarea class="edit-area" id="edit-day-5"></textarea>
+                <button class="btn-save" id="save-day-5" onclick="saveDay(5)">儲存更新</button>
+            </div>
+
+            <div id="day-6" class="day-panel card">
+                <button class="btn-edit" onclick="toggleEditDay(6)">編輯行程</button>
+                <h3>Day 6 (5/12)</h3>
+                <div class="display-text" id="view-day-6">🐟 柳橋連合市場
+🚗 還車手續
+✈️ 乘搭 CX529 回程</div>
+                <textarea class="edit-area" id="edit-day-6"></textarea>
+                <button class="btn-save" id="save-day-6" onclick="saveDay(6)">儲存更新</button>
             </div>
         </div>
     </div>
 
     <div id="bookings" class="tab-content">
-        <h2 style="margin-bottom:20px;">預訂資訊</h2>
-        
-        <div class="ticket card">
-            <div style="display:flex; justify-content:space-between; border-bottom:1px dashed rgba(255,255,255,0.3); padding-bottom:10px; margin-bottom:10px;">
-                <span>HKG</span>
-                <span>✈️ CX512</span>
-                <span>FUK</span>
-            </div>
-            <div style="font-size:12px;">座位: 42K | 登機時間: 07:35</div>
+        <h2>預訂資訊</h2>
+        <div class="card" id="card-flight">
+            <button class="btn-edit" onclick="toggleBooking('flight')">編輯</button>
+            <h3>✈️ 航班/租車</h3>
+            <div class="display-text" id="view-flight">尚未輸入...</div>
+            <textarea class="edit-area" id="edit-flight"></textarea>
+            <button class="btn-save" id="save-flight" onclick="saveBooking('flight')" style="display:none;">儲存</button>
         </div>
-
-        <div class="card">
-            <div style="font-weight:700;">🏨 AMANEK BEPPU YULA-RE</div>
-            <div style="font-size:12px; color:var(--sub); margin:5px 0;">3月3日 - 3月5日 (2晚)</div>
-            <div style="font-size:12px; background:#f0f0f0; padding:10px; border-radius:8px;">
-                地址: 大分県別府市駅前本町6-35<br>
-                分攤金額: 兩人共 ¥32,000
-            </div>
-        </div>
-    </div>
-
-    <div id="expense" class="tab-content">
-        <div class="dash card">
-            <div style="font-size:14px; opacity:0.8;">總支出預算 (估算)</div>
-            <div class="dash-val">¥ 125,400</div>
-            <div style="font-size:12px; opacity:0.8;">約 HKD 6,520 (匯率 0.052)</div>
-        </div>
-
-        <div class="card">
-            <h3>新增記帳</h3><br>
-            <input type="number" pattern="\[0-9]*\" placeholder="金額 (JPY)" id="expAmount">
-            <select id="expCategory">
-                <option>美食</option><option>購物</option><option>交通</option><option>門票</option>
-            </select>
-            <button onclick="addExp()">記錄支出</button>
-        </div>
-
-        <div id="expList"></div>
-    </div>
-
-    <div id="journal" class="tab-content">
-        <h2 style="margin-bottom:20px;">旅遊日誌</h2>
-        <div class="card">
-            <input type="text" placeholder="分享此刻的心情...">
-            <button style="background:var(--accent)">上傳照片</button>
-        </div>
-        <div class="grid">
-            <div class="grid-item"><img src="https://images.unsplash.com/photo-1542044896530-05d85be9b11a?auto=format&fit=crop&w=300" alt="Japan"></div>
-            <div class="grid-item"><img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=300" alt="Temple"></div>
+        <div class="card" id="card-hotel">
+            <button class="btn-edit" onclick="toggleBooking('hotel')">編輯</button>
+            <h3>🏨 飯店預約</h3>
+            <div class="display-text" id="view-hotel">尚未輸入...</div>
+            <textarea class="edit-area" id="edit-hotel"></textarea>
+            <button class="btn-save" id="save-hotel" onclick="saveBooking('hotel')" style="display:none;">儲存</button>
         </div>
     </div>
 
     <div id="planning" class="tab-content">
-        <h2 style="margin-bottom:20px;">行前準備</h2>
+        <h2>準備清單</h2>
         <div class="card">
-            <h3 style="font-size:16px;">🧳 行李清單</h3>
-            <div class="todo-row"><input type="checkbox" checked> <span>護照 & 國際駕照</span></div>
-            <div class="todo-row"><input type="checkbox"> <span>日幣現鈔</span></div>
-            <div class="todo-row"><input type="checkbox"> <span>換衣插頭</span></div>
-        </div>
-        <div class="card">
-            <h3 style="font-size:16px;">🛍️ 購物清單</h3>
-            <div class="todo-row"><input type="checkbox"> <span>福砂屋蜂蜜蛋糕</span></div>
-            <div class="todo-row"><input type="checkbox"> <span>藥妝 (合利他命)</span></div>
+            <div style="display:flex; gap:8px;">
+                <input type="text" id="todoInput" placeholder="新增清單..." style="margin:0;">
+                <button onclick="addItem()" style="padding:0 15px; background:var(--primary); color:white; border-radius:10px; border:none;">新增</button>
+            </div>
+            <div id="todoList" style="margin-top:15px;"></div>
         </div>
     </div>
+
+    <div id="expense" class="tab-content">
+        <h2>記帳本</h2>
+        <div class="card">
+            <input type="number" id="expAmt" placeholder="金額 (JPY)">
+            <input type="text" id="expNote" placeholder="項目">
+            <button onclick="addExp()" style="width:100%; padding:14px; background:var(--primary); color:white; border-radius:10px; border:none; font-weight:bold;">記錄</button>
+        </div>
+        <div id="expList"></div>
+    </div>
+
 </div>
 
 <nav class="bottom-nav">
-    <a href="javascript:void(0)" class="nav-item active" onclick="switchTab('schedule', this)">
-        <span class="nav-icon">📅</span>行程
-    </a>
-    <a href="javascript:void(0)" class="nav-item" onclick="switchTab('bookings', this)">
-        <span class="nav-icon">🎟️</span>預訂
-    </a>
-    <a href="javascript:void(0)" class="nav-item" onclick="switchTab('expense', this)">
-        <span class="nav-icon">💰</span>記帳
-    </a>
-    <a href="javascript:void(0)" class="nav-item" onclick="switchTab('journal', this)">
-        <span class="nav-icon">📸</span>日誌
-    </a>
-    <a href="javascript:void(0)" class="nav-item" onclick="switchTab('planning', this)">
-        <span class="nav-icon">📋</span>準備
-    </a>
+    <a href="javascript:void(0)" class="nav-item active" onclick="switchTab('schedule', this)"><span class="nav-icon">📅</span>行程</a>
+    <a href="javascript:void(0)" class="nav-item" onclick="switchTab('bookings', this)"><span class="nav-icon">🎟️</span>預訂</a>
+    <a href="javascript:void(0)" class="nav-item" onclick="switchTab('planning', this)"><span class="nav-icon">📋</span>清單</a>
+    <a href="javascript:void(0)" class="nav-item" onclick="switchTab('expense', this)"><span class="nav-icon">💰</span>記帳</a>
 </nav>
 
 <script>
-    // Tab Switching
+    // Tab 切換
     function switchTab(id, el) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         el.classList.add('active');
-        window.scrollTo(0, 0);
     }
 
-    // Countdown Timer
-    function updateCountdown() {
-        const startDate = new Date('2026-03-02T08:15:00');
-        const now = new Date();
-        const diff = startDate - now;
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const el = document.getElementById('countdown');
-        if (days > 0) el.innerText = `距離出發還有 ${days} 天`;
-        else if (days === 0) el.innerText = `九州之旅進行中！`;
-        else el.innerText = `回憶滿載的旅行`;
+    // 行程天數切換
+    function switchDay(dayNum, el) {
+        document.querySelectorAll('.day-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.date-item').forEach(d => d.classList.remove('active'));
+        document.getElementById('day-' + dayNum).classList.add('active');
+        el.classList.add('active');
     }
 
-    // Expense Logic
-    let expenses = JSON.parse(localStorage.getItem('kyushu_exp')) || [];
-    function addExp() {
-        const amt = document.getElementById('expAmount').value;
-        const cat = document.getElementById('expCategory').value;
-        if(amt) {
-            expenses.unshift({ amt, cat, date: new Date().toLocaleDateString() });
-            localStorage.setItem('kyushu_exp', JSON.stringify(expenses));
-            document.getElementById('expAmount').value = '';
-            renderExp();
+    // --- 行程編輯邏輯 ---
+    function toggleEditDay(day) {
+        const view = document.getElementById('view-day-' + day);
+        const edit = document.getElementById('edit-day-' + day);
+        const btn = document.getElementById('save-day-' + day);
+        edit.value = view.innerText;
+        view.style.display = 'none';
+        edit.style.display = 'block';
+        btn.style.display = 'block';
+    }
+
+    function saveDay(day) {
+        const view = document.getElementById('view-day-' + day);
+        const edit = document.getElementById('edit-day-' + day);
+        const btn = document.getElementById('save-day-' + day);
+        localStorage.setItem('kyushu_day_' + day, edit.value);
+        view.innerText = edit.value;
+        view.style.display = 'block';
+        edit.style.display = 'none';
+        btn.style.display = 'none';
+    }
+
+    // --- 預訂資訊編輯邏輯 ---
+    function toggleBooking(field) {
+        const view = document.getElementById('view-' + field);
+        const edit = document.getElementById('edit-' + field);
+        const btn = document.getElementById('save-' + field);
+        edit.value = view.innerText === '尚未輸入...' ? '' : view.innerText;
+        view.style.display = 'none';
+        edit.style.display = 'block';
+        btn.style.display = 'block';
+    }
+
+    function saveBooking(field) {
+        const view = document.getElementById('view-' + field);
+        const edit = document.getElementById('edit-' + field);
+        const btn = document.getElementById('save-' + field);
+        localStorage.setItem('kyushu_book_' + field, edit.value);
+        view.innerText = edit.value || '尚未輸入...';
+        view.style.display = 'block';
+        edit.style.display = 'none';
+        btn.style.display = 'none';
+    }
+
+    // --- 初始化載入儲存的內容 ---
+    function init() {
+        for(let i=1; i<=6; i++) {
+            const saved = localStorage.getItem('kyushu_day_' + i);
+            if(saved) document.getElementById('view-day-' + i).innerText = saved;
         }
+        ['flight', 'hotel'].forEach(f => {
+            const saved = localStorage.getItem('kyushu_book_' + f);
+            if(saved) document.getElementById('view-' + f).innerText = saved;
+        });
+        renderTodos();
+        renderExps();
     }
-    function renderExp() {
-        const list = document.getElementById('expList');
-        list.innerHTML = expenses.map(e => `
-            <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:12px;">
-                <div>
-                    <div style="font-weight:700;">${e.cat}</div>
-                    <div style="font-size:10px; color:var(--sub);">${e.date}</div>
-                </div>
-                <div style="font-weight:700; color:var(--accent);">¥ ${parseInt(e.amt).toLocaleString()}</div>
+
+    // --- 清單 & 記帳 簡單實作 ---
+    let todos = JSON.parse(localStorage.getItem('k_todos')) || [{text:'護照',done:false}];
+    function renderTodos() {
+        document.getElementById('todoList').innerHTML = todos.map((t,i) => `
+            <div class="todo-item">
+                <span><input type="checkbox" ${t.done?'checked':''} onchange="todos[${i}].done=!todos[${i}].done;saveTodos()"> ${t.text}</span>
+                <span onclick="todos.splice(${i},1);saveTodos()" style="color:red;font-size:12px;">刪除</span>
             </div>
         `).join('');
     }
+    function saveTodos() { localStorage.setItem('k_todos', JSON.stringify(todos)); renderTodos(); }
+    function addItem() { const input=document.getElementById('todoInput'); if(input.value){todos.push({text:input.value,done:false});input.value='';saveTodos();}}
 
-    // Initialize
-    updateCountdown();
-    renderExp();
-
-    // PWA Service Worker (Data URL)
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('data:application/javascript,self.addEventListener("fetch",()=>{})');
+    let exps = JSON.parse(localStorage.getItem('k_exps')) || [];
+    function addExp() {
+        const amt = document.getElementById('expAmt').value;
+        const note = document.getElementById('expNote').value;
+        if(amt && note) { exps.unshift({amt,note}); localStorage.setItem('k_exps', JSON.stringify(exps)); renderExps(); }
     }
+    function renderExps() {
+        document.getElementById('expList').innerHTML = exps.map(e => `<div class="card" style="display:flex;justify-content:space-between;"><span>${e.note}</span><strong>¥${parseInt(e.amt).toLocaleString()}</strong></div>`).join('');
+    }
+
+    init();
 </script>
 </body>
 </html>
